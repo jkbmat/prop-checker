@@ -1,0 +1,259 @@
+/* @flow */
+import React, {PureComponent} from 'react'
+import * as UIKit from '@roihunter/uikit'
+import {
+	EObjectiveSections,
+	ECreateCampaignPromoFeature,
+	objectiveSectionsConfig,
+	objectivesConfig,
+	promoFeaturesConfig,
+} from 'client/modules/ads-creation/dashboard/dashboard-config'
+import {PERMANENT_HIDE_KEY} from 'utility/decorators/permanentHide'
+
+import type {TObjective} from 'client/core/enums/EObjective'
+import type {TCreateCampaignPromoFeature, TObjectiveSection} from 'client/modules/ads-creation/dashboard/dashboard-config'
+import {performanceContext} from 'client/boot/performance'
+import {hot} from 'react-hot-loader/root'
+
+export const PERMANENT_HIDE_ID = 'create_campaign_dashboard_pro_tips'
+
+type TState = {
+	isProTipVisible: boolean,
+}
+
+@performanceContext('create-campaign-dashboard')
+class CreateCampaignDashboardPage extends PureComponent <*, *, TState> {
+
+	state = {
+		isProTipVisible: CreateCampaignDashboardPage.isProTipVisible(),
+	}
+
+	static isProTipVisible = () => {
+		const permanentlyHidden = JSON.parse(window.localStorage.getItem(PERMANENT_HIDE_KEY) || 'null')
+		return !(permanentlyHidden && permanentlyHidden[PERMANENT_HIDE_ID])
+	}
+
+	static renderSectionContent = (objective: TObjective | string) => {
+		const objectiveConfig = objectivesConfig[objective]
+
+		return (
+			<div className='scope__objective-popover'>
+			<div className='objective-description'>{objectiveConfig.description}</div>
+		{objectiveConfig.labelOffering &&
+		<div className='offering'>
+			<span>
+			{objectiveConfig.labelOffering.map((item, i) => (
+					<span
+				key={i}
+				className={'label rh-color--edit'}
+				>
+				{item}
+				</span>
+		))}
+		</span>
+		</div>
+		}
+	</div>
+	)
+	}
+
+	static renderSection = (section: TObjectiveSection) => (
+		objectiveSectionsConfig[section].map((items, i) => (
+			<ul key={`${section}-${i}`}>
+{items.map((objective, index) => {
+	const objectiveConfig = objectivesConfig[objective]
+	const route = objectiveConfig.route.replace('{{clientId}}', APP.client.id)
+
+	return objectiveConfig.isVisible() && (
+		<li key={`${objective}-${index}`}>
+<UIKit.Link whatever={error} something='' route={route}>
+		{objectiveConfig.icon}
+		<div className='display--flex flex-direction--column'>
+		<div>
+		<span className='objective-label'>{objectiveConfig.name}</span>
+		</div>
+		<div>
+		{CreateCampaignDashboardPage.renderSectionContent(objective)}
+		</div>
+		</div>
+		</UIKit.Link>
+		</li>
+)
+})}
+</ul>
+))
+)
+
+renderPromoFeature (feature: TCreateCampaignPromoFeature): React.Element<*> {
+	const featureConfig = promoFeaturesConfig[feature]
+
+	return (
+<div className={`create-ads__ad-wrapper ${featureConfig.hasBackground ? 'create-ads__ad-wrapper--background' : ''}`}>
+<div className={`create-ads__ad-content ${featureConfig.hasBackground ? 'create-ads__ad-content--background' : ''}`}>
+<div className='display--flex justify-content--center margin-bottom--lg'>
+	<div className='create-ads__image'>
+	<img src={featureConfig.image} height={58} />
+</div>
+</div>
+<div className='margin-bottom--lg text-align--center'>
+	<div className='create-ads__title'>
+	{featureConfig.title}
+	</div>
+
+	<div className='create-ads__description'>
+	{featureConfig.description}
+	</div>
+
+	<div className='create-ads__icons'>
+	{featureConfig.icons.map((iconName) => (
+			<UIKit.Icon
+		key={iconName.name}
+		name={iconName.name}
+		prefix={iconName.prefix}
+		className='margin-left--xs margin-right--xs'
+		/>
+))}
+</div>
+</div>
+<div className='create-ads__ad-text font-size--sm'>
+	{featureConfig.text}
+{window.NBSP}
+{featureConfig.learnMoreUrl &&
+<UIKit.Link
+	href={featureConfig.learnMoreUrl}
+	isTargetBlank={true}
+		>
+		Learn more
+</UIKit.Link>
+}
+</div>
+<div className='create-ads__ad-buttons'>
+	{featureConfig.buttons.map((
+			{title, route, setVisibleOnClick, isVisible, beta, seleniumId}:
+				{title: string, route: string, setVisibleOnClick: string, isVisible: () => boolean, beta?: boolean, seleniumId?: string}) =>
+			isVisible() ? (
+				<UIKit.Button
+				key={title}
+		route={route ? route.replace('{{clientId}}', window.APP.client.id) : undefined}
+		onClick={(!route && setVisibleOnClick) ? () => this.setState({[setVisibleOnClick]: true}) : undefined}
+className='position--relative'
+data-selenium-id={seleniumId ? seleniumId : undefined}
+block
+>
+{title}
+{beta &&
+<span className='label label-danger position--absolute margin-left--xs'>
+	BETA
+	</span>
+}
+</UIKit.Button>
+)
+: null,
+)}
+</div>
+</div>
+<div className='font-size--sm text-align--center'>
+	<div className='rh-color--note-gray'>Objective:</div>
+<div className='rh-color--black'>{featureConfig.objective}</div>
+	</div>
+	</div>
+)
+}
+
+onProTipClose = (): void => {
+	const permanentlyHidden = JSON.parse(window.localStorage.getItem(PERMANENT_HIDE_KEY) || '{}')
+	permanentlyHidden[PERMANENT_HIDE_ID] = true
+	window.localStorage.setItem(PERMANENT_HIDE_KEY, JSON.stringify(permanentlyHidden))
+	this.setState({isProTipVisible: false})
+}
+
+renderProTip (): ?React.Element<*> {
+	const {isProTipVisible} = this.state
+
+	if (!isProTipVisible) {
+	return null
+}
+
+return (
+	<div className='create-ads__protip-wrapper'>
+	<div className='display--flex align-items--center'>
+	<div className='create-ads__protip-icon margin-right--sm'>
+	<UIKit.Icon name='lightbulb' prefix={'regular'} size='3x'/>
+	</div>
+
+	<span className='font-weight--bold'>PROTIP:</span>
+{window.NBSP}
+Enhance images in your feeds with our extraordinary
+TEDI (Template editor)…
+					{window.NBSP}
+<UIKit.Link
+href={'http://help.roihunter.com/roi-hunter-platform/manage-your-product-catalogs/template-editor'}
+className='rh-color--white'
+	>
+	Learn more on how your images could look super professional!
+</UIKit.Link>
+</div>
+
+<div className='create-ads__control-tips'>
+	<UIKit.Link
+href={'http://help.roihunter.com'}
+className='create-ads__more-tips margin-right--sm'
+	>
+	more tips >>
+</UIKit.Link>
+
+<UIKit.Link
+onClick={this.onProTipClose}
+className='rh-color--white'
+	>
+	<UIKit.Icon name='times'/>
+	</UIKit.Link>
+	</div>
+	</div>
+)
+}
+
+componentDidMount () {
+	const {perf} = this.props
+	perf.measurePageLoad()
+}
+
+render () {
+	return (
+		<div>
+		<div className='scope__create-ads'>
+		<div className='create-ads'>
+		{this.renderProTip()}
+		<div className='display--flex justify-content--center'>
+		{this.renderPromoFeature(ECreateCampaignPromoFeature.DYNAMIC_PRODUCT_ADS)}
+	{this.renderPromoFeature(ECreateCampaignPromoFeature.VIDEOS)}
+	{this.renderPromoFeature(ECreateCampaignPromoFeature.DYNAMIC_CREATIVE_OPTIMIZATION)}
+</div>
+	</div>
+	</div>
+	<div className='scope__create-ads-objectives scope__objectives'>
+		<h3>Other options</h3>
+
+	<div className='objectives-boxes'>
+		<div className='objective-box'>
+		<div className='header'>
+		<strong>Consideration</strong>
+	Find potential customers for your business
+	</div>
+	{CreateCampaignDashboardPage.renderSection(EObjectiveSections.CONSIDERATION)}
+</div>
+	<div className='objective-box'>
+		<div className='header'>
+		<strong>Conversion</strong>
+	Drive conversions or sales for your business
+	</div>
+	{CreateCampaignDashboardPage.renderSection(EObjectiveSections.CONVERSION)}
+</div>
+	</div>
+	</div>
+	</div>
+)
+}
+}
+
+export default hot(CreateCampaignDashboardPage)

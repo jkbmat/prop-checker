@@ -1,0 +1,30 @@
+import * as React from 'react'
+import {EIconFlip, EIconPrefix, EIconRotate, EIconSize} from 'enums/components/EIcon'
+
+export interface IProps {
+	/** FontAwesome icon name to be used, *without* the `fa-` prefix! */
+	name: string | undefined,
+	/** Custom class name addition */
+	className?: string,
+	/** Prefix for FontAwesome 5 */
+	prefix?: EIconPrefix,
+	/** Rotate icon with values '90' '180' '270' */
+	rotate?: EIconRotate,
+	/** Animate everything with 0.3s animation length */
+	transitionAll?: boolean,
+	/** Defines icon size */
+	size?: EIconSize,
+	/** Has icon fixed width */
+	fixedWidth?: boolean,
+	/** Flip icon */
+	flip?: EIconFlip,
+	/** Have icon rotate with 8 steps */
+	pulse?: boolean,
+	/** Get any icon to rotate */
+	spin?: boolean,
+	/** onClick event */
+	onClick?: (event: React.MouseEvent<HTMLSpanElement>) => void,
+
+	/** Props to pass through to the HTML span element */
+	nativeProps?: Partial<React.HTMLAttributes<HTMLSpanElement>>,
+}

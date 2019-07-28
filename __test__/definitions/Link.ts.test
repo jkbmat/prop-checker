@@ -1,0 +1,37 @@
+import * as React from 'react'
+import {ELinkVariant} from 'enums/components/ELink'
+
+export interface IProps {
+	/** Href where the link should head and also triggers the page reload (always use route instead if possible) */
+	href?: string,
+	/** Optional onClick handler, passes React's synthetic event */
+	onClick?: (event: React.MouseEvent<any>) => void,
+	/** Used for routing in RH (href is ignored) */
+	route?: string,
+	/** Generate link without styles of `rh-link` class. **Do not use if not necessary.** */
+	plainLink?: boolean,
+	/** Variant */
+	variant?: ELinkVariant,
+	/** Block level link */
+	block?: boolean,
+	/** Link without underline */
+	noUnderline?: boolean,
+	/** Open link in new tab */
+	isTargetBlank?: boolean,
+	/** Link is disabled and `href` and `onClick` are not executed. Currently has no visual state to represent disabled state. */
+	disabled?: boolean,
+	/** Additional className to be used */
+	className?: string,
+	/** Enable href with onClick event */
+	defaultBrowserBehaviour?: boolean,
+	/** Set display--flex for inner span */
+	flexContent?: boolean,
+	onKeyDown?: (event: any) => void,
+	onMouseDown?: (event: any) => void,
+	nodeRef?: React.RefObject<HTMLAnchorElement>,
+
+	'data-selenium-id'?: string,
+	
+	/** Props to pass through to the HTML anchor element */
+	nativeProps?: Partial<React.AnchorHTMLAttributes<HTMLAnchorElement>>,
+}

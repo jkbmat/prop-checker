@@ -1,0 +1,44 @@
+declare module React {
+	export interface MouseEvent<T> {}
+	export interface RefObject<T> {}
+	export interface ButtonHTMLAttributes<T> {}
+}
+
+type EButtonVariant = any
+type EButtonSize = any
+type EButtonType = any
+
+
+
+export interface IProps {
+	/** Button color variant */
+	variant: EButtonVariant,
+	/** Action to perform upon clicking (does not trigger when disabled prop is used) */
+	onClick?: (event: React.MouseEvent<any>) => void,
+	/** Custom class name addition */
+	className?: string,
+	/** Bootstrap 3 inspired size variant */
+	size?: EButtonSize,
+	/** Button is block level */
+	block?: boolean,
+	/** Disabled button (onClick is replaced with return false statement, cursor is changed, style is changed) */
+	disabled?: boolean,
+	/** Specify to create an anchor link element `<a href='#'></a>` */
+	href: string,
+	/** Specify the type of button */
+	type?: EButtonType,
+	/** Enable href with onClick event */
+	defaultBrowserBehaviour?: boolean,
+	route?: string,
+	isTargetBlank?: boolean,
+	active?: boolean
+	/** Attach a ref to the node */
+	nodeRef?: React.RefObject<HTMLButtonElement>,
+	onMouseEnter?: (event: any) => void,
+	onMouseLeave?: (event: any) => void,
+	
+	'data-selenium-id'?: string,
+	
+	/** Props to pass through to the HTML button element */
+	nativeProps?: Partial<React.ButtonHTMLAttributes<HTMLButtonElement>>,
+}
